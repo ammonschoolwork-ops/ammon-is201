@@ -266,6 +266,9 @@
   .app-topnav a{color:#bcd6ea;text-decoration:none;padding:.2rem .5rem;border-radius:7px}
   .app-topnav a:hover{background:rgba(111,183,212,.25);color:#fff}
   .app-topnav a[aria-current]{background:#f08a3c;color:#1c1206;font-weight:600}
+  /* Expanded underwriting step headings in the deal detail view */
+  .step-h{margin:2.2rem 0 .6rem;padding-top:.9rem;border-top:2px solid #e2e8f0;color:#1e293b;font-size:1.1rem}
+  [id^="step-"]{scroll-margin-top:1rem}
 </style>
 </head>
 <body>
@@ -767,7 +770,7 @@ function openDeal(id){
   const dash=document.getElementById("dashView");
 
   const sidebar = `<nav class="sidebar"><ol>
-    ${STEPS.map((s,i)=>`<li><a class="${i===0?"cur":""}" onclick="${i===0?"":`toast('The ${s} step is part of the full app — this demo shows the Intake view.')`}">${i+1}. ${s}</a></li>`).join("")}
+    ${STEPS.map((s,i)=>`<li><a class="${i===0?"cur":""}" href="#step-${s.toLowerCase()}">${i+1}. ${s}</a></li>`).join("")}
   </ol></nav>`;
 
   const facts = [
@@ -787,7 +790,7 @@ function openDeal(id){
     <div class="detail-grid">
       ${sidebar}
       <div>
-        <h2>${esc(d.address)}</h2>
+        <h2 id="step-intake">${esc(d.address)}</h2>
         <p class="sub">${[d.city,d.state,d.zip].filter(Boolean).join(", ")} · ${recPill(d.recommendation)} ${statusPill(d.status)} · Score ${Math.round(d.dealScore)}</p>
 
         <div class="ai-panel">
@@ -814,6 +817,48 @@ function openDeal(id){
           <p style="margin:0;font-size:.85rem;color:var(--slate-700);white-space:pre-wrap">${esc(d.listingDescription)}</p></div>
 
         <div class="group"><p class="leg">Photos · auto-imported from listing</p><div class="photos">${photos}</div></div>
+
+        <!-- ===== Full underwriting workflow — all steps expanded so the workings are visible ===== -->
+        <h3 id="step-financing" class="step-h">2 · Financing</h3>
+        <div class="group"><div class="facts">
+          <div class="fact"><p class="fl">Listing price</p><p class="fv">${money(d.listingPrice)}</p></div>
+          <div class="fact"><p class="fl">Max offer (underwritten)</p><p class="fv">${money(d.maxOfferPrice)}</p></div>
+          <div class="fact"><p class="fl">Cash required</p><p class="fv">${money(d.cashRequired)}</p></div>
+          <div class="fact"><p class="fl">Est. monthly carry</p><p class="fv">${money(d.monthlyTotal)}/mo</p></div>
+        </div></div>
+
+        <h3 id="step-rehab" class="step-h">3 · Rehab</h3>
+        <div class="group"><p class="leg">Scope of work — AI-extracted from the listing description</p><ul>${cluesHtml}</ul></div>
+
+        <h3 id="step-comps" class="step-h">4 · Comps</h3>
+        <div class="group"><div class="facts">
+          <div class="fact"><p class="fl">After-repair value (ARV)</p><p class="fv">${money(d.arvBase)}</p></div>
+          <div class="fact"><p class="fl">Spread over list price</p><p class="fv">${money(d.arvBase - d.listingPrice)}</p></div>
+          <div class="fact"><p class="fl">Price / sqft (list)</p><p class="fv">${money(Math.round(d.listingPrice/d.sqft))}</p></div>
+        </div><p style="margin:.6rem 0 0;font-size:.8rem;color:var(--slate-500)">ARV is set from comparable sales; the full app pulls and adjusts the comp set automatically.</p></div>
+
+        <h3 id="step-exit" class="step-h">5 · Exit</h3>
+        <div class="group">
+          <p class="leg">Flip exit</p>
+          <div class="facts">
+            <div class="fact"><p class="fl">Net flip profit</p><p class="fv">${money(d.netProfitFlip)}</p></div>
+            <div class="fact"><p class="fl">Return on cash (ROI)</p><p class="fv">${Math.round(d.roiFlip*100)}%</p></div>
+          </div>
+          <p class="leg" style="margin-top:1rem">Rental fallback</p>
+          <div class="facts">
+            <div class="fact"><p class="fl">Monthly cash flow</p><p class="fv">${money(d.rentalCashFlow)}/mo</p></div>
+            <div class="fact"><p class="fl">All-in monthly</p><p class="fv">${money(d.monthlyTotal)}/mo</p></div>
+          </div>
+        </div>
+
+        <h3 id="step-summary" class="step-h">6 · Summary</h3>
+        <div class="group">
+          <p class="sub" style="margin-top:0">${recPill(d.recommendation)} · Score ${Math.round(d.dealScore)} · Max offer ${money(d.maxOfferPrice)}</p>
+          <p style="margin:.4rem 0 0;font-size:.9rem;color:var(--slate-700)">${esc(d.aiSummary)}</p>
+        </div>
+
+        <h3 id="step-memo" class="step-h">7 · Memo</h3>
+        <div class="group"><p style="margin:0;font-size:.85rem;color:var(--slate-600)">The full app generates a written investment memo from everything above. In this public demo, the AI summary and the underwriting data on this page are the inputs that memo is built from.</p></div>
 
         <div style="margin-top:1.5rem"><a class="back-link" onclick="closeDeal()">← Back to dashboard</a></div>
       </div>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="Portrait placeholder for Ammon Hasson">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f3b5c"/>
+      <stop offset="1" stop-color="#15293f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="110" cy="110" r="108" fill="url(#g)" stroke="#fff" stroke-width="4"/>
+  <text x="110" y="118" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="74" font-weight="700" fill="#ffffff">AH</text>
+  <text x="110" y="172" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" fill="#9ec3e6">Headshot</text>
+</svg>
