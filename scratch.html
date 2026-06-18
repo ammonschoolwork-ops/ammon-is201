@@ -199,6 +199,23 @@
           window.addEventListener('resize', size);
           var s = document.createElement('script');
           s.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+          s.onload = function () {
+            // Skip the "Introduction to the Methodology" story point; open on the data view instead
+            var poll = setInterval(function () {
+              try {
+                var vizs = tableau.VizManager.getVizs();
+                if (!vizs || !vizs.length) return;
+                clearInterval(poll);
+                vizs[0].addEventListener(tableau.TableauEventName.VIZ_LOAD_COMPLETE, function () {
+                  try {
+                    var sheet = vizs[0].getWorkbook().getActiveSheet();
+                    var pts = sheet.getStoryPointsInfo ? sheet.getStoryPointsInfo() : null;
+                    if (pts && pts.length > 1) pts[1].activateAsync();
+                  } catch (e) {}
+                });
+              } catch (e) {}
+            }, 200);
+          };
           viz.parentNode.insertBefore(s, viz);
         })();
       </script>
